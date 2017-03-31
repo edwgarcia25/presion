@@ -30,6 +30,8 @@ var varIntervalBetweenData = 2;
 // Quality of Serive for the publish event. Supported values : 0, 1, 2
 var QosLevel = 0;
 
+var flag = false;
+
 // read the id of the IoT foundation org out of a local .env file
 // format of .env file:
 // iotf_org=<id of IoT Foundation organization>
@@ -170,8 +172,13 @@ iotfClient.on("connect", function () {
         //}
         if (dataPacket.d.nivelPresion > 4){
         	dataPacket.d.nivelPresion = dataPacket.d.nivelPresion - nivelPresionIncrement;
-        }
-        if(dataPacket.d.nivelPresion<1){
+        	flag = true;
+        }else if(dataPacket.d.nivelPresion < 1){
+        	dataPacket.d.nivelPresion = dataPacket.d.nivelPresion + nivelPresionIncrement;
+        	flag = false;
+        }else if(flag){
+			dataPacket.d.nivelPresion = dataPacket.d.nivelPresion - nivelPresionIncrement;
+        }else if(!flag){
         	dataPacket.d.nivelPresion = dataPacket.d.nivelPresion + nivelPresionIncrement;
         }
         //if (dataPacket.d.humidity === 100) {
